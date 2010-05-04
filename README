@@ -1,0 +1,9 @@
+A simple packer for Haskell source code.
+
+Author: Joel Lehtonen, joel.lehtonen ät iki.fi.
+License: Public domain (at the moment)
+
+Inspired by the work in "Make It 4k" by Fit and Bandwagon.
+
+The actual demo is based on Haskell wiki page at 
+http://www.haskell.org/haskellwiki/OpenGLTutorial1
