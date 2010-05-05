@@ -3,13 +3,14 @@ module Main where
 import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT
 
+main :: IO ()
 main = do 
   (progname, _) <- getArgsAndInitialize
   createWindow "436 tavun demo!"
   displayCallback $= display
   mainLoop
 
-display = do 
+display = do --Testing comment
   clear [ColorBuffer]
   renderPrimitive Quads $ do
     color $ (Color3 (1.0::GLfloat) 0 0)
