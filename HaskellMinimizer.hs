@@ -11,7 +11,7 @@ import Data.List
 minimizeFiles :: [FilePath] -> FilePath -> IO ()
 minimizeFiles fs toFile = do
   a <- readModules fs
-  writeFile toFile $ minimize a
+  writeFile toFile $ postClean $ minimize a
 
 readModule :: FilePath -> IO HsModule
 readModule fromFile = do
@@ -32,16 +32,22 @@ combineModules ms = HsModule
                     (getSrc $ head ms)
                     main_mod
                     Nothing
-                    (foldl1' union $ map (getImp) ms)
+                    filteredImports
                     (concat $ map getDec ms)
     where getSrc (HsModule x _ _ _ _) = x
           getMod (HsModule _ x _ _ _) = x
           getImp (HsModule _ _ _ xs _) = map cleanImport xs
           getDec (HsModule _ _ _ _ x) = x
+          uniqueImports = foldl1' union $ map (getImp) ms
+          modules = map getMod ms
+          filteredImports = filter (moduleFilter modules) uniqueImports
 
 -- |Cleans import line info so Eq works "intuitively". Used to union imports.
 cleanImport x = x {importLoc = (SrcLoc "dummy" 1 1) }
 
+-- |Checks if the module is in the list.
+moduleFilter :: [Module] -> HsImportDecl -> Bool
+moduleFilter ms x = (importModule x) `notElem` ms
 
 minimize :: HsModule -> String
 minimize m = prettyPrintStyleMode minimumStyle minimumMode $ clean m
@@ -69,3 +75,8 @@ testClean fs = do
   
 -- |Clean is no-op at the moment.
 clean = id
+
+-- Ugly cleaner, hope we'll find a better way of cleaning...
+postClean xs | isPrefixOf head_plate xs == False = error "Bug!"
+             | otherwise = drop (length head_plate) $ take (length xs-1) xs
+    where head_plate = "module Main where { "
