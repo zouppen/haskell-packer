@@ -7,12 +7,18 @@ import Language.Haskell.Pretty
 import Language.Haskell.Syntax
 import Control.Monad (liftM)
 import Data.List
+import Instructions
 
-minimizeFiles :: [FilePath] -> FilePath -> IO ()
-minimizeFiles fs toFile = do
-  a <- readModules fs
-  writeFile toFile $ postClean $ minimize a
+prettyClean ins = do
+  a <- readModules $ inputFiles ins
+  putStrLn $ prettyPrint $ clean ins a
 
+minimizeFiles :: Instructions -> IO String
+minimizeFiles ins = do
+  a <- readModules $ inputFiles ins
+  return $ postClean $ minimize ins a
+
+-- |Reads one module to an internal structure.
 readModule :: FilePath -> IO HsModule
 readModule fromFile = do
   contents <- readFile fromFile
@@ -23,6 +29,7 @@ readModule fromFile = do
                            (show $ srcColumn loc) ++ ": "++
                            str
 
+-- |Reads multiple modules and combines them into one.
 readModules :: [FilePath] -> IO HsModule
 readModules ms = liftM combineModules $ mapM readModule ms
 
@@ -49,8 +56,8 @@ cleanImport x = x {importLoc = (SrcLoc "dummy" 1 1) }
 moduleFilter :: [Module] -> HsImportDecl -> Bool
 moduleFilter ms x = (importModule x) `notElem` ms
 
-minimize :: HsModule -> String
-minimize m = prettyPrintStyleMode minimumStyle minimumMode $ clean m
+minimize :: Instructions -> HsModule -> String
+minimize ins m = prettyPrintStyleMode minimumStyle minimumMode $ clean ins m
 
 minimumStyle = Style { mode = OneLineMode
                      , lineLength = 100
@@ -68,13 +75,19 @@ minimumMode = PPHsMode { classIndent = 0
                        , linePragmas = False
                        , comments = False
                        }
-
-testClean fs = do
-  a <- readModules fs
-  putStrLn $ prettyPrint $ clean a
   
 -- |Clean is no-op at the moment.
-clean = id
+clean :: Instructions -> HsModule -> HsModule
+clean ins (HsModule srcLoc modName exports imports decls) =
+    HsModule srcLoc modName exports imports
+    (filter (typeFilter (keepSigs ins)) decls)
+
+-- |'typeFilter' takes out all those type definitions whose names are
+-- not in "welcome list" xs.
+typeFilter :: [String] -> HsDecl -> Bool
+typeFilter xs (HsTypeSig _ [HsIdent x] _) = x `elem` xs
+typeFilter xs (HsTypeSig _ _ _) = error "A weird type, FIXME"
+typeFilter _ _ = True
 
 -- Ugly cleaner, hope we'll find a better way of cleaning...
 postClean xs | isPrefixOf head_plate xs == False = error "Bug!"
