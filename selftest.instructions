@@ -1,0 +1,9 @@
+Instructions
+{ inputFiles = [ "HaskellMinimizer.hs" 
+               , "Instructions.hs"
+               , "Packer.hs"
+               ]
+, keepSigs = []
+, loaderFile = "simpleLoader.dat"
+, outFile = "selftest"
+}

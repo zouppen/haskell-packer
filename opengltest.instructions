@@ -1,0 +1,7 @@
+Instructions
+{ inputFiles = [ "OpenGLTest.hs"
+               ]
+, keepSigs = []
+, loaderFile = "glutLoader.dat"
+, outFile = "opengltest"
+}

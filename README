@@ -5,5 +5,80 @@ License: Public domain (at the moment)
 
 Inspired by the work in "Make It 4k" by Fit and Bandwagon.
 
-The actual demo is based on Haskell wiki page at 
+The OpenGL test is based on Haskell wiki page at 
 http://www.haskell.org/haskellwiki/OpenGLTutorial1
+
+Why?
+====
+
+Demoscene. There is no real use for this packer outside demoscene. You
+can produce for example 4 kilobyte entries easily when the source is
+packed instead of executable. GHC runtime consumes many megabytes and
+it's a WAY too large to fit inside any size-constrained compo.
+
+The downside is that the user (or the compo crew) needs to have
+full Haskell Platform including compilers to run demos packed this
+way. Some parties, like Assembly, is not accepting this kind of
+entries, but some do.
+
+Anyway writing this packer was a very educational trip inside
+compilers.
+
+Compiling packer
+================
+
+$ ghc --make Packer.hs -o packer
+
+Usage of packer
+===============
+
+$ ./packer selftest.instructions
+
+In this example file "selftest.instructions" the source code of the 
+packer itself is packed. You can pack any Haskell source if you have 
+suitable loader and you have set up file paths to .instructions file.
+
+Another example is 419 bytes long OpenGL test which can be packed this
+way:
+
+$ ./packer opengltest.instructions
+
+Principle of operation
+======================
+
+The packer is composed of two separate phases. Minimizer and the
+actual packer. Minimizer removes extra data from source code and
+packer applies lossless gzip compression to the output of
+minimizer. Then, loader is inserted in the beginning of compressed
+data. Loader uses some shell command to extract, compile and execute
+the program.
+
+To use this, you need to build a loader and .instructions file. Take a
+look at opengltest.instructions and selftest.instructions for more
+information.
+
+Minimizer status
+================
+
+Minimizer removes comments, function type signatures and indentation
+from the source code.
+
+Sometimes type signatures are mandatory for GHC to work. To help GHC a
+little, you can put the name of the function in "keepsigs" part in
+.instructions file. Then that signature is not touched when doing
+minimization phase.
+
+Minimizer doesn't produce totally minimum output. There is much work
+to do with rewriting function, type etc. names to shorter
+forms. However, that's not a huge improvement because gzip does quite
+good work with repetitive data. Also, there are extra spaces around
+semicolons and literals which may render the file a little bigger than
+it needs to be. Improvements are welcome.
+
+License
+=======
+
+GNU General Public License version 3 (at your option, later). See more
+information from fsf.org.
+
+TODO: polish this license part.

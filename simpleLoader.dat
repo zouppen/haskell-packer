@@ -1,0 +1,8 @@
+#!/bin/sh
+o=/tmp/D
+i=$o.hs
+tail -n+9 $0|zcat>$i
+ghc --make $i -o $o
+$o $@
+rm $i $o $o.o $o.hi
+exit
