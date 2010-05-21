@@ -76,7 +76,8 @@ minimumMode = PPHsMode { classIndent = 0
                        , comments = False
                        }
   
--- |Clean is no-op at the moment.
+-- |Cleaning takes some not needed parts out and in future it may even
+-- alter function names.
 clean :: Instructions -> HsModule -> HsModule
 clean ins (HsModule srcLoc modName exports imports decls) =
     HsModule srcLoc modName exports imports

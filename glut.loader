@@ -1,0 +1,9 @@
+#!/bin/sh
+d=`mktemp -d 2>/dev/null||mktemp -dt /tmp`
+o=$d/D
+i=$o.hs
+tail -n+10 $0|zcat>$i
+ghc -package GLUT $i -o $o
+$o
+rm -r $d
+exit

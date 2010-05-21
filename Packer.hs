@@ -29,7 +29,7 @@ pack ins = do
   putStrLn $ "Success. Wrote " ++
            show ((B.length compressed)+(B.length loader)) ++ " bytes to '" ++
            outFile ins ++ "'."
-    where params = defaultCompressParams { compressLevel = BestCompression }
+    where params = defaultCompressParams { compressLevel = bestCompression }
 
 -- |Main function reads input from a given file and does packing.
 main :: IO ()

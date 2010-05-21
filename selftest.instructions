@@ -4,6 +4,6 @@ Instructions
                , "Packer.hs"
                ]
 , keepSigs = []
-, loaderFile = "simpleLoader.dat"
+, loaderFile = "simple.loader"
 , outFile = "selftest"
 }
