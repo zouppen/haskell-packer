@@ -18,7 +18,7 @@ it's a WAY too large to fit inside any size-constrained compo.
 
 The downside is that the user (or the compo crew) needs to have
 full Haskell Platform including compilers to run demos packed this
-way. Some parties, like Assembly, is not accepting this kind of
+way. Some parties, like Assembly, are not accepting this kind of
 entries, but some do.
 
 Anyway writing this packer was a very educational trip inside
@@ -50,7 +50,7 @@ The packer is composed of two separate phases. Minimizer and the
 actual packer. Minimizer removes extra data from source code and
 packer applies lossless gzip compression to the output of
 minimizer. Then, loader is inserted in the beginning of compressed
-data. Loader uses some shell command to extract, compile and execute
+data. Loader uses some shell commands to extract, compile and execute
 the program.
 
 To use this, you need to build a loader and .instructions file. Take a
@@ -74,6 +74,16 @@ forms. However, that's not a huge improvement because gzip does quite
 good work with repetitive data. Also, there are extra spaces around
 semicolons and literals which may render the file a little bigger than
 it needs to be. Improvements are welcome.
+
+Portability and size of the loader
+==================================
+
+The loaders provided are compatible with both GNU and BSD environments
+(ordinary Linux and Mac OS X configurations). That makes a loader a
+bit bloated because 'mktemp' is not very portable and doesn't have any
+common options across these platforms. If you need about 20 bytes more
+space for the payload, you may remove GNU or BSD specific parts from
+your loader.
 
 License
 =======
