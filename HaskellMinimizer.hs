@@ -24,7 +24,7 @@ readModule fromFile = do
   contents <- readFile fromFile
   case parseModule contents of
     (ParseOk a) -> return a
-    ParseFailed loc str -> error $ "Parsing failed at " ++
+    ParseFailed loc str -> fail $ "Parsing failed at " ++
                            (show $ srcLine loc) ++ ":" ++
                            (show $ srcColumn loc) ++ ": "++
                            str
