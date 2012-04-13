@@ -10,6 +10,8 @@ import Language.Haskell.Syntax
 
 type Shower = (HsModule -> String)
 
+bodyStructure = structure getBody
+
 structure :: Shower -> FilePath -> IO String
 structure shower f = do
   origText <- readFile f
